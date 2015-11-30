@@ -18,20 +18,47 @@
 
 package org.wso2.carbon.mss;
 
+/**
+ * Class for holding handlers for routes
+ */
 public class HttpMethods {
 
+    /**
+     * Map the route for HTTP GET requests
+     *
+     * @param path  the path
+     * @param route The route
+     */
     public void get(final String path, final Route route) {
 
     }
 
+    /**
+     * Map the route for HTTP POST requests
+     *
+     * @param path  the path
+     * @param route The route
+     */
     public void post(String path, Route route) {
 
     }
 
+    /**
+     * Map the route for HTTP PUT requests
+     *
+     * @param path  the path
+     * @param route The route
+     */
     public void put(String path, Route route) {
 
     }
 
+    /**
+     * Map the route for HTTP DELETE requests
+     *
+     * @param path  the path
+     * @param route The route
+     */
     public void delete(String path, Route route) {
 
     }
