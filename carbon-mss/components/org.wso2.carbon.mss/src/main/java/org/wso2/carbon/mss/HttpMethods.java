@@ -18,10 +18,28 @@
 
 package org.wso2.carbon.mss;
 
+import io.netty.handler.codec.http.HttpMethod;
+import org.wso2.carbon.mss.internal.router.ExceptionHandler;
+import org.wso2.carbon.mss.internal.router.LambdaEndpoint;
+import org.wso2.carbon.mss.internal.router.LambdaResourceModel;
+import org.wso2.carbon.mss.internal.router.api.HttpResourceModel;
+
+import java.util.Collections;
+import java.util.LinkedList;
+import java.util.List;
+
 /**
  * Class for holding handlers for routes
  */
 public class HttpMethods {
+
+    private static ExceptionHandler exceptionHandler = new ExceptionHandler();
+    private List<HttpResourceModel> lambdaResourceModels = new LinkedList<>();
+    private static final HttpMethod
+            GET = HttpMethod.GET,
+            POST = HttpMethod.POST,
+            PUT = HttpMethod.PUT,
+            DELETE = HttpMethod.DELETE;
 
     /**
      * Map the route for HTTP GET requests
@@ -30,7 +48,11 @@ public class HttpMethods {
      * @param route The route
      */
     public void get(String path, Route route) {
-
+        LambdaResourceModel lambdaResourceModel = new LambdaResourceModel(path,
+                Collections.singleton(GET),
+                exceptionHandler,
+                new LambdaEndpoint(route));
+        lambdaResourceModels.add(lambdaResourceModel);
     }
 
     /**
@@ -40,7 +62,11 @@ public class HttpMethods {
      * @param route The route
      */
     public void post(String path, Route route) {
-
+        LambdaResourceModel lambdaResourceModel = new LambdaResourceModel(path,
+                Collections.singleton(POST),
+                exceptionHandler,
+                new LambdaEndpoint(route));
+        lambdaResourceModels.add(lambdaResourceModel);
     }
 
     /**
@@ -50,7 +76,11 @@ public class HttpMethods {
      * @param route The route
      */
     public void put(String path, Route route) {
-
+        LambdaResourceModel lambdaResourceModel = new LambdaResourceModel(path,
+                Collections.singleton(PUT),
+                exceptionHandler,
+                new LambdaEndpoint(route));
+        lambdaResourceModels.add(lambdaResourceModel);
     }
 
     /**
@@ -60,7 +90,11 @@ public class HttpMethods {
      * @param route The route
      */
     public void delete(String path, Route route) {
-
+        LambdaResourceModel lambdaResourceModel = new LambdaResourceModel(path,
+                Collections.singleton(DELETE),
+                exceptionHandler,
+                new LambdaEndpoint(route));
+        lambdaResourceModels.add(lambdaResourceModel);
     }
 
 }

@@ -38,6 +38,16 @@ public class LambdaResourceModel implements org.wso2.carbon.mss.internal.router.
     private ExceptionHandler exceptionHandler;
     private LambdaEndpoint lambdaEndpoint;
 
+    public LambdaResourceModel(String path,
+                               Set<HttpMethod> httpMethods,
+                               ExceptionHandler exceptionHandler,
+                               LambdaEndpoint lambdaEndpoint) {
+        this.path = path;
+        this.httpMethods = httpMethods;
+        this.exceptionHandler = exceptionHandler;
+        this.lambdaEndpoint = lambdaEndpoint;
+    }
+
     @Override
     public boolean matchConsumeMediaType(String consumesMediaType) {
         return true;
