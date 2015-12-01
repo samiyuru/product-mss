@@ -23,28 +23,28 @@ import org.junit.Test;
 import org.wso2.carbon.mss.HttpStreamer;
 
 /**
- * Tests functionality fo HttpResourceModel.
+ * Tests functionality fo JaxrsResourceModel.
  */
-public class HttpResourceModelTest {
+public class JaxrsResourceModelTest {
 
     @Test
     public void testStreamingReqSupportedCheckWhenStreamingSupported() throws NoSuchMethodException {
         TestClass testObj = new TestClass();
-        HttpResourceModel httpResourceModel = new HttpResourceModel("", testObj.getClass()
+        JaxrsResourceModel jaxrsResourceModel = new JaxrsResourceModel("", testObj.getClass()
                 .getMethod("methodWithHttpStreaming", HttpStreamer.class),
                 testObj, null);
-        Assert.assertTrue(httpResourceModel.isStreamingReqSupported());
-        Assert.assertTrue(httpResourceModel.isStreamingReqSupported());
+        Assert.assertTrue(jaxrsResourceModel.isStreamingReqSupported());
+        Assert.assertTrue(jaxrsResourceModel.isStreamingReqSupported());
     }
 
     @Test
     public void testStreamingReqSupportedCheckWhenStreamingUnsupported() throws NoSuchMethodException {
         TestClass testObj = new TestClass();
-        HttpResourceModel httpResourceModel = new HttpResourceModel("", testObj.getClass()
+        JaxrsResourceModel jaxrsResourceModel = new JaxrsResourceModel("", testObj.getClass()
                 .getMethod("methodWithNoHttpStreaming", Object.class),
                 testObj, null);
-        Assert.assertTrue(!httpResourceModel.isStreamingReqSupported());
-        Assert.assertTrue(!httpResourceModel.isStreamingReqSupported());
+        Assert.assertTrue(!jaxrsResourceModel.isStreamingReqSupported());
+        Assert.assertTrue(!jaxrsResourceModel.isStreamingReqSupported());
     }
 
     /**

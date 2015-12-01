@@ -49,10 +49,10 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Context;
 
 /**
- * HttpResourceModel contains information needed to handle Http call for a given path. Used as a destination in
+ * JaxrsResourceModel contains information needed to handle Http call for a given path. Used as a destination in
  * {@code PatternPathRouterWithGroups} to route URI paths to right Http end points.
  */
-public final class HttpResourceModel implements org.wso2.carbon.mss.internal.router.api.HttpResourceModel {
+public final class JaxrsResourceModel implements org.wso2.carbon.mss.internal.router.api.HttpResourceModel {
 
     private static final Set<Class<? extends Annotation>> SUPPORTED_PARAM_ANNOTATIONS =
             ImmutableSet.of(PathParam.class, QueryParam.class, HeaderParam.class, Context.class);
@@ -78,8 +78,8 @@ public final class HttpResourceModel implements org.wso2.carbon.mss.internal.rou
      * @param handler          instance {@code HttpHandler}.
      * @param exceptionHandler instance {@code ExceptionHandler} to handle exceptions.
      */
-    public HttpResourceModel(String path, Method method, Object handler,
-                             ExceptionHandler exceptionHandler) {
+    public JaxrsResourceModel(String path, Method method, Object handler,
+                              ExceptionHandler exceptionHandler) {
         this.httpMethods = getHttpMethods(method);
         this.path = path;
         this.method = method;

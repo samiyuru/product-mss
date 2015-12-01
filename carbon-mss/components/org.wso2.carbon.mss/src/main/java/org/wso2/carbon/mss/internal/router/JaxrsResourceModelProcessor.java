@@ -39,16 +39,16 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Context;
 
 /**
- * This class is responsible for processing the HttpResourceModel
+ * This class is responsible for processing the JaxrsResourceModel
  * when a HTTP request arrives.
  */
-public class HttpResourceModelProcessor {
+public class JaxrsResourceModelProcessor {
 
-    private final HttpResourceModel httpResourceModel;
+    private final JaxrsResourceModel jaxrsResourceModel;
     private HttpStreamer httpStreamer;
 
-    public HttpResourceModelProcessor(HttpResourceModel httpResourceModel) {
-        this.httpResourceModel = httpResourceModel;
+    public JaxrsResourceModelProcessor(JaxrsResourceModel jaxrsResourceModel) {
+        this.jaxrsResourceModel = jaxrsResourceModel;
     }
 
     /**
@@ -72,10 +72,11 @@ public class HttpResourceModelProcessor {
 
         //TODO: Refactor group values.
         try {
-            if (httpResourceModel.getHttpMethod().contains(request.getMethod())) {
+            if (jaxrsResourceModel.getHttpMethod().contains(request.getMethod())) {
                 //Setup args for reflection call
-                List<HttpResourceModel.ParameterInfo<?>> paramInfoList = httpResourceModel.getParamInfoList();
-                List<String> producesMediaTypes = httpResourceModel.getProducesMediaTypes();
+                JaxrsEndpoint jaxrsEndpoint = (JaxrsEndpoint) jaxrsResourceModel.getEndpointBean();
+                List<JaxrsResourceModel.ParameterInfo<?>> paramInfoList = jaxrsEndpoint.getParamInfoList();
+                List<String> producesMediaTypes = jaxrsEndpoint.getProducesMediaTypes();
                 Object[] args = new Object[paramInfoList.size()];
                 String acceptType = "*/*";
                 if (!producesMediaTypes.contains("*/*") && acceptTypes != null) {
@@ -84,20 +85,20 @@ public class HttpResourceModelProcessor {
                                     producesMediaTypes.stream().filter(acceptTypes::contains).findFirst().get();
                 }
                 int idx = 0;
-                for (HttpResourceModel.ParameterInfo<?> paramInfo : paramInfoList) {
+                for (JaxrsResourceModel.ParameterInfo<?> paramInfo : paramInfoList) {
                     if (paramInfo.getAnnotation() != null) {
                         Class<? extends Annotation> annotationType = paramInfo.getAnnotation().annotationType();
                         if (PathParam.class.isAssignableFrom(annotationType)) {
-                            args[idx] = getPathParamValue((HttpResourceModel.ParameterInfo<String>) paramInfo,
+                            args[idx] = getPathParamValue((JaxrsResourceModel.ParameterInfo<String>) paramInfo,
                                     groupValues);
                         } else if (QueryParam.class.isAssignableFrom(annotationType)) {
-                            args[idx] = getQueryParamValue((HttpResourceModel.ParameterInfo<List<String>>) paramInfo,
+                            args[idx] = getQueryParamValue((JaxrsResourceModel.ParameterInfo<List<String>>) paramInfo,
                                     request.getUri());
                         } else if (HeaderParam.class.isAssignableFrom(annotationType)) {
-                            args[idx] = getHeaderParamValue((HttpResourceModel.ParameterInfo<List<String>>) paramInfo,
+                            args[idx] = getHeaderParamValue((JaxrsResourceModel.ParameterInfo<List<String>>) paramInfo,
                                     request);
                         } else if (Context.class.isAssignableFrom(annotationType)) {
-                            args[idx] = getContextParamValue((HttpResourceModel.ParameterInfo<Object>) paramInfo,
+                            args[idx] = getContextParamValue((JaxrsResourceModel.ParameterInfo<Object>) paramInfo,
                                     request, responder);
                         }
                     } else if (request instanceof FullHttpRequest) {
@@ -112,18 +113,18 @@ public class HttpResourceModelProcessor {
                 }
 
                 if (httpStreamer == null) {
-                    return new HttpMethodInfo(httpResourceModel.getMethod(),
-                            httpResourceModel.getHttpHandler(),
+                    return new HttpMethodInfo(jaxrsEndpoint.getMethod(),
+                            jaxrsEndpoint.getHttpHandler(),
                             request, responder,
                             args,
-                            httpResourceModel.getExceptionHandler(),
+                            jaxrsResourceModel.getExceptionHandler(),
                             acceptType);
                 } else {
-                    return new HttpMethodInfo(httpResourceModel.getMethod(),
-                            httpResourceModel.getHttpHandler(),
+                    return new HttpMethodInfo(jaxrsEndpoint.getMethod(),
+                            jaxrsEndpoint.getHttpHandler(),
                             request, responder,
                             args,
-                            httpResourceModel.getExceptionHandler(),
+                            jaxrsResourceModel.getExceptionHandler(),
                             acceptType,
                             httpStreamer);
                 }
@@ -141,7 +142,7 @@ public class HttpResourceModelProcessor {
 
 
     @SuppressWarnings("unchecked")
-    private Object getContextParamValue(HttpResourceModel.ParameterInfo<Object> paramInfo, HttpRequest request,
+    private Object getContextParamValue(JaxrsResourceModel.ParameterInfo<Object> paramInfo, HttpRequest request,
                                         HttpResponder responder) {
         Type paramType = paramInfo.getParameterType();
         Object value = null;
@@ -160,7 +161,7 @@ public class HttpResourceModelProcessor {
     }
 
     @SuppressWarnings("unchecked")
-    private Object getPathParamValue(HttpResourceModel.ParameterInfo<String> info, Map<String, String> groupValues) {
+    private Object getPathParamValue(JaxrsResourceModel.ParameterInfo<String> info, Map<String, String> groupValues) {
         PathParam pathParam = info.getAnnotation();
         String value = groupValues.get(pathParam.value());
         Preconditions.checkArgument(value != null, "Could not resolve value for parameter %s", pathParam.value());
@@ -174,7 +175,7 @@ public class HttpResourceModelProcessor {
     }
 
     @SuppressWarnings("unchecked")
-    private Object getQueryParamValue(HttpResourceModel.ParameterInfo<List<String>> info, String uri) {
+    private Object getQueryParamValue(JaxrsResourceModel.ParameterInfo<List<String>> info, String uri) {
         QueryParam queryParam = info.getAnnotation();
         List<String> values = new QueryStringDecoder(uri).parameters().get(queryParam.value());
         if (values == null || values.isEmpty()) {
@@ -187,7 +188,7 @@ public class HttpResourceModelProcessor {
     }
 
     @SuppressWarnings("unchecked")
-    private Object getHeaderParamValue(HttpResourceModel.ParameterInfo<List<String>> info, HttpRequest request) {
+    private Object getHeaderParamValue(JaxrsResourceModel.ParameterInfo<List<String>> info, HttpRequest request) {
         HeaderParam headerParam = info.getAnnotation();
         String headerName = headerParam.value();
         List<String> headers = request.headers().getAll(headerName);

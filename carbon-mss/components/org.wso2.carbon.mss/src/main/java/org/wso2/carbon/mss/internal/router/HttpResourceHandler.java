@@ -66,7 +66,7 @@ public final class HttpResourceHandler implements HttpHandler {
 
     /**
      * Construct HttpResourceHandler. Reads all annotations from all the handler classes and methods passed in,
-     * constructs patternPathRouter which is routable by path to {@code HttpResourceModel} as destination of the route.
+     * constructs patternPathRouter which is routable by path to {@code JaxrsResourceModel} as destination of the route.
      *
      * @param handlers         Iterable of HttpHandler.
      * @param interceptors     Iterable of interceptors.
@@ -99,7 +99,7 @@ public final class HttpResourceHandler implements HttpHandler {
                         relativePath = method.getAnnotation(Path.class).value();
                     }
                     String absolutePath = String.format("%s/%s", basePath, relativePath);
-                    patternRouter.add(absolutePath, new org.wso2.carbon.mss.internal.router.HttpResourceModel(absolutePath, method,
+                    patternRouter.add(absolutePath, new JaxrsResourceModel(absolutePath, method,
                             handler, new ExceptionHandler()));
                 } else {
                     log.trace("Not adding method {}({}) to path routing like. " +
@@ -227,7 +227,7 @@ public final class HttpResourceHandler implements HttpHandler {
     }
 
     /**
-     * Get HttpResourceModel which matches the HttpMethod of the request.
+     * Get JaxrsResourceModel which matches the HttpMethod of the request.
      *
      * @param routableDestinations List of ResourceModels.
      * @param targetHttpMethod     HttpMethod.
