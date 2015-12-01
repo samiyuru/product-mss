@@ -31,6 +31,7 @@ import org.slf4j.LoggerFactory;
 import org.wso2.carbon.mss.HandlerContext;
 import org.wso2.carbon.mss.HttpHandler;
 import org.wso2.carbon.mss.HttpResponder;
+import org.wso2.carbon.mss.internal.router.api.EndpointBean;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
@@ -168,8 +169,16 @@ public final class HttpResourceHandler implements HttpHandler {
 
                 // Call preCall method of handler interceptors.
                 boolean terminated = false;
-                HandlerInfo handlerInfo = new HandlerInfo(httpResourceModel.getMethod().getDeclaringClass().getName(),
-                        httpResourceModel.getMethod());
+                EndpointBean endpointBean = httpResourceModel.getEndpointBean();
+                HandlerInfo handlerInfo;
+                if (endpointBean instanceof JaxrsEndpoint) {
+                    JaxrsEndpoint jaxrsEndpoint = (JaxrsEndpoint) endpointBean;
+                    handlerInfo = new HandlerInfo(jaxrsEndpoint.getMethod().getDeclaringClass().getName(),
+                            jaxrsEndpoint.getMethod());
+                } else {
+                    //TODO: define what to include in HandlerInfo for lambda handlers
+                    handlerInfo = new HandlerInfo(null, null);
+                }
                 for (Interceptor interceptor : interceptors) {
                     if (!interceptor.preCall(request, responder, handlerInfo)) {
                         // Terminate further request processing if preCall returns false.

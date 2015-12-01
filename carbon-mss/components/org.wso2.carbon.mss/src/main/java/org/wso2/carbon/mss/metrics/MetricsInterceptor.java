@@ -87,6 +87,11 @@ public class MetricsInterceptor implements Interceptor {
     @Override
     public boolean preCall(HttpRequest request, HttpResponder responder, HandlerInfo handlerInfo) {
         Method method = handlerInfo.getMethod();
+        //TODO: define how to handle metrics with lambda handlers
+        //method is null for lambda handlers
+        if (method == null) {
+            return true;
+        }
         Set<Interceptor> interceptors = map.get(method);
         if (interceptors == null) {
             if (method.isAnnotationPresent(Timed.class)) {
@@ -140,6 +145,11 @@ public class MetricsInterceptor implements Interceptor {
     @Override
     public void postCall(HttpRequest request, HttpResponseStatus status, HandlerInfo handlerInfo) {
         Method method = handlerInfo.getMethod();
+        //TODO: define how to handle metrics with lambda handlers
+        //method is null for lambda handlers
+        if (method == null) {
+            return;
+        }
         Set<Interceptor> interceptors = map.get(method);
         if (interceptors != null) {
             for (Interceptor interceptor : interceptors) {
