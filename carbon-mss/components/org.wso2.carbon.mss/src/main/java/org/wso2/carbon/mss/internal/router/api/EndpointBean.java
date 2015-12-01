@@ -18,36 +18,9 @@
 
 package org.wso2.carbon.mss.internal.router.api;
 
-import io.netty.handler.codec.http.HttpMethod;
-import org.wso2.carbon.mss.internal.router.ExceptionHandler;
-
-import java.util.List;
-import java.util.Set;
-
 /**
- * Object that implements this interface contains
- * information of a route endpoint
+ * Bean that contains the function of the endpoint.
+ * This wrapper helps to generalize {@link HttpMethodInfo}.
  */
-public interface HttpResourceModel {
-
-    /**
-     * @return path associated with this model.
-     */
-    String getPath();
-
-    /**
-     * @return httpMethods.
-     */
-    Set<HttpMethod> getHttpMethod();
-
-    boolean isStreamingReqSupported();
-
-    ExceptionHandler getExceptionHandler();
-
-    boolean matchConsumeMediaType(String consumesMediaType);
-
-    boolean matchProduceMediaType(List<String> producesMediaTypes);
-
-    EndpointBean getEndpointBean();
-
+public interface EndpointBean {
 }

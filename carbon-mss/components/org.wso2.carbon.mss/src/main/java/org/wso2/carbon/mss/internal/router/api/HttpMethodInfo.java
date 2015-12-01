@@ -23,7 +23,7 @@ import io.netty.handler.codec.http.HttpContent;
 /**
  * Object that implements this interface has all
  * the dependencies that are required to invoke
- * a route handler that implements {@link Routable}
+ * a route handler that implements {@link EndpointBean}
  */
 public interface HttpMethodInfo {
 
