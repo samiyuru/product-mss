@@ -97,4 +97,7 @@ public class HttpMethods {
         lambdaResourceModels.add(lambdaResourceModel);
     }
 
+    public List<HttpResourceModel> getLambdaResourceModels() {
+        return lambdaResourceModels;
+    }
 }

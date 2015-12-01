@@ -30,8 +30,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.wso2.carbon.mss.HandlerContext;
 import org.wso2.carbon.mss.HttpHandler;
+import org.wso2.carbon.mss.HttpMethods;
 import org.wso2.carbon.mss.HttpResponder;
 import org.wso2.carbon.mss.internal.router.api.EndpointBean;
+import org.wso2.carbon.mss.internal.router.api.HttpResourceModel;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
@@ -71,7 +73,9 @@ public final class HttpResourceHandler implements HttpHandler {
      * @param urlRewriter      URL re-writer.
      * @param exceptionHandler Exception handler
      */
-    public HttpResourceHandler(Iterable<? extends Object> handlers, Iterable<? extends Interceptor> interceptors,
+    public HttpResourceHandler(Iterable<? extends Object> handlers,
+                               List<HttpMethods> lambdaSets,
+                               Iterable<? extends Interceptor> interceptors,
                                URLRewriter urlRewriter, ExceptionHandler exceptionHandler) {
         //Store the handlers to call init and destroy on all handlers.
         this.handlers = ImmutableList.copyOf(handlers);
@@ -95,7 +99,7 @@ public final class HttpResourceHandler implements HttpHandler {
                         relativePath = method.getAnnotation(Path.class).value();
                     }
                     String absolutePath = String.format("%s/%s", basePath, relativePath);
-                    patternRouter.add(absolutePath, new HttpResourceModel(absolutePath, method,
+                    patternRouter.add(absolutePath, new org.wso2.carbon.mss.internal.router.HttpResourceModel(absolutePath, method,
                             handler, new ExceptionHandler()));
                 } else {
                     log.trace("Not adding method {}({}) to path routing like. " +
@@ -103,6 +107,14 @@ public final class HttpResourceHandler implements HttpHandler {
                             method.getName(), method.getParameterTypes());
                 }
             }
+
+            lambdaSets.stream().forEach(httpMethods -> {
+                httpMethods.getLambdaResourceModels()
+                        .stream()
+                        .forEach(httpResourceModel -> {
+                            patternRouter.add(httpResourceModel.getPath(), httpResourceModel);
+                        });
+            });
         }
     }
 
