@@ -38,7 +38,7 @@ import java.lang.reflect.Method;
  * and arguments required for invocation by the Dispatcher. RequestRouter populates this class and stores in its
  * context as attachment.
  */
-class HttpMethodInfo {
+class HttpMethodInfo implements org.wso2.carbon.mss.internal.router.api.HttpMethodInfo {
 
     private final Method method;
     private final Object handler;
@@ -93,7 +93,8 @@ class HttpMethodInfo {
     /**
      * Calls the httpHandler method.
      */
-    void invoke() {
+    @Override
+    public void invoke() {
         try {
             Object returnVal = method.invoke(handler, args);
             //sending return value as output
@@ -109,7 +110,8 @@ class HttpMethodInfo {
         }
     }
 
-    void chunk(HttpContent chunk) {
+    @Override
+    public void chunk(HttpContent chunk) {
         if (httpStreamHandler == null) {
             // If the handler method doesn't want to handle chunk request, the httpStreamHandler will be null.
             // It applies to case when the handler method inspects the request and decides to decline it.
