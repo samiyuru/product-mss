@@ -29,7 +29,7 @@ public class HttpMethods {
      * @param path  the path
      * @param route The route
      */
-    public void get(final String path, final Route route) {
+    public void get(String path, Route route) {
 
     }
 
