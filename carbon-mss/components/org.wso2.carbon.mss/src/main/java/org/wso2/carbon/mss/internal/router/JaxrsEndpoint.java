@@ -34,6 +34,18 @@ public class JaxrsEndpoint implements EndpointBean {
     private List<String> producesMediaTypes;
     private List<HttpResourceModel.ParameterInfo<?>> parameterInfoList;
 
+    public JaxrsEndpoint(Method method,
+                         Object handler,
+                         List<String> consumesMediaTypes,
+                         List<String> producesMediaTypes,
+                         List<HttpResourceModel.ParameterInfo<?>> parameterInfoList) {
+        this.method = method;
+        this.handler = handler;
+        this.consumesMediaTypes = consumesMediaTypes;
+        this.producesMediaTypes = producesMediaTypes;
+        this.parameterInfoList = parameterInfoList;
+    }
+
     public List<String> getConsumesMediaTypes() {
         return consumesMediaTypes;
     }

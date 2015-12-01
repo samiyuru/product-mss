@@ -25,6 +25,7 @@ import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Sets;
 import io.netty.handler.codec.http.HttpMethod;
 import org.wso2.carbon.mss.HttpStreamer;
+import org.wso2.carbon.mss.internal.router.api.EndpointBean;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
@@ -51,7 +52,7 @@ import javax.ws.rs.core.Context;
  * HttpResourceModel contains information needed to handle Http call for a given path. Used as a destination in
  * {@code PatternPathRouterWithGroups} to route URI paths to right Http end points.
  */
-public final class HttpResourceModel {
+public final class HttpResourceModel implements org.wso2.carbon.mss.internal.router.api.HttpResourceModel {
 
     private static final Set<Class<? extends Annotation>> SUPPORTED_PARAM_ANNOTATIONS =
             ImmutableSet.of(PathParam.class, QueryParam.class, HeaderParam.class, Context.class);
@@ -67,14 +68,14 @@ public final class HttpResourceModel {
     private List<String> consumesMediaTypes;
     private List<String> producesMediaTypes;
     private int isStreamingReqSupported = STREAMING_REQ_UNKNOWN;
-
+    private final JaxrsEndpoint jaxrsEndpoint;
 
     /**
      * Construct a resource model with HttpMethod, method that handles httprequest, Object that contains the method.
      *
-     * @param path    path associated with this model.
-     * @param method  handler that handles the http request.
-     * @param handler instance {@code HttpHandler}.
+     * @param path             path associated with this model.
+     * @param method           handler that handles the http request.
+     * @param handler          instance {@code HttpHandler}.
      * @param exceptionHandler instance {@code ExceptionHandler} to handle exceptions.
      */
     public HttpResourceModel(String path, Method method, Object handler,
@@ -87,6 +88,11 @@ public final class HttpResourceModel {
         this.exceptionHandler = exceptionHandler;
         consumesMediaTypes = parseConsumesMediaTypes();
         producesMediaTypes = parseProducesMediaTypes();
+        jaxrsEndpoint = new JaxrsEndpoint(this.method,
+                this.handler,
+                consumesMediaTypes,
+                producesMediaTypes,
+                this.paramInfoList);
     }
 
     private List<String> parseConsumesMediaTypes() {
@@ -136,20 +142,6 @@ public final class HttpResourceModel {
      */
     public String getPath() {
         return path;
-    }
-
-    /**
-     * @return handler method that handles an http end-point.
-     */
-    public Method getMethod() {
-        return method;
-    }
-
-    /**
-     * @return instance of {@code HttpHandler}.
-     */
-    public Object getHttpHandler() {
-        return handler;
     }
 
     @Override
@@ -245,20 +237,12 @@ public final class HttpResourceModel {
         }
     }
 
-    public List<ParameterInfo<?>> getParamInfoList() {
-        return paramInfoList;
-    }
-
     public ExceptionHandler getExceptionHandler() {
         return exceptionHandler;
     }
 
-    public List<String> getConsumesMediaTypes() {
-        return consumesMediaTypes;
-    }
-
-    public List<String> getProducesMediaTypes() {
-        return producesMediaTypes;
+    public EndpointBean getEndpointBean() {
+        return jaxrsEndpoint;
     }
 
     /**
