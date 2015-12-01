@@ -67,9 +67,9 @@ public class MicroservicesRunner {
     /**
      * Default constructor which will take care of initializing Netty transports in the file pointed to by the
      * System property <code>transports.netty.conf</code>.
-     *
+     * <p/>
      * If that System property is not specified, it will start a single Netty transport on port 8080.
-     *
+     * <p/>
      * {@link #MicroservicesRunner(int...)}
      */
     public MicroservicesRunner() {
@@ -94,6 +94,18 @@ public class MicroservicesRunner {
     public MicroservicesRunner deploy(Object microservice) {
         checkState();
         msRegistry.addHttpService(microservice);
+        return this;
+    }
+
+    /**
+     * Deploy a lambda httpMethods
+     *
+     * @param httpMethods The microservice which is to be deployed
+     * @return this MicroservicesRunner object
+     */
+    public MicroservicesRunner deploy(HttpMethods httpMethods) {
+        checkState();
+        msRegistry.addHttpService(httpMethods);
         return this;
     }
 

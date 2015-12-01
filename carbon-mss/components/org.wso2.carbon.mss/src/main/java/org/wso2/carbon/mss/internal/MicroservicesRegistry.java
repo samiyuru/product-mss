@@ -20,6 +20,7 @@ package org.wso2.carbon.mss.internal;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.wso2.carbon.mss.HttpMethods;
 import org.wso2.carbon.mss.internal.router.ExceptionHandler;
 import org.wso2.carbon.mss.internal.router.HttpResourceHandler;
 import org.wso2.carbon.mss.internal.router.Interceptor;
@@ -30,11 +31,9 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 
@@ -45,11 +44,13 @@ public class MicroservicesRegistry {
 
     private static final Logger LOG = LoggerFactory.getLogger(MicroservicesRegistry.class);
     private static final MicroservicesRegistry instance = new MicroservicesRegistry();
-    private final Set<Object> httpServices = new HashSet<>();
+    private final List<Object> httpServices = new LinkedList<>();
+    private final List<HttpMethods> httpMethodSets = new LinkedList<>();
     private final List<Interceptor> interceptors = new ArrayList<>();
     private URLRewriter urlRewriter = null;
     private volatile HttpResourceHandler httpResourceHandler =
-            new HttpResourceHandler(Collections.emptyList(),
+            new HttpResourceHandler(httpServices,
+                    httpMethodSets,
                     interceptors, urlRewriter, new ExceptionHandler());
 
     private MicroservicesRegistry() {
@@ -109,7 +110,8 @@ public class MicroservicesRegistry {
 
     private void updateHttpResourceHandler() {
         httpResourceHandler =
-                new HttpResourceHandler(Collections.unmodifiableSet(httpServices),
+                new HttpResourceHandler(httpServices,
+                        httpMethodSets,
                         interceptors, urlRewriter, new ExceptionHandler());
     }
 
@@ -153,6 +155,6 @@ public class MicroservicesRegistry {
 
     private boolean isValidLifecycleMethod(Optional<Method> method, Class lcAnnotation) {
         return method.filter(m -> Modifier.isPublic(m.getModifiers())
-                                  && m.getAnnotation(lcAnnotation) != null).isPresent();
+                && m.getAnnotation(lcAnnotation) != null).isPresent();
     }
 }
