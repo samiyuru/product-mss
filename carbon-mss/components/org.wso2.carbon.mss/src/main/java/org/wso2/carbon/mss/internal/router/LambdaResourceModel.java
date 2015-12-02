@@ -70,7 +70,7 @@ public class LambdaResourceModel implements org.wso2.carbon.mss.internal.router.
 
     @Override
     public boolean isStreamingReqSupported() {
-        return true;
+        return false;
     }
 
     @Override
