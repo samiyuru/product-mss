@@ -80,6 +80,12 @@ public class MicroservicesRegistry {
         LOG.info("Added HTTP Service: " + httpHandler);
     }
 
+    public void addHttpService(HttpMethods httpMethods) {
+        httpMethodSets.add(httpMethods);
+        updateHttpResourceHandler();
+        LOG.info("Added HTTP Service: " + httpMethods);
+    }
+
     public void removeHttpService(Object httpService) {
         httpServices.remove(httpService);
         updateHttpResourceHandler();
