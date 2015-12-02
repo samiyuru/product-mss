@@ -35,7 +35,7 @@
     <name>Lambda Handlers Microservice Sample</name>
 
     <properties>
-        <microservice.mainClass>org.wso2.carbon.mss.example.Application</microservice.mainClass>
+        <microservice.mainClass>org.wso2.carbon.mss.example.HelloService</microservice.mainClass>
     </properties>
 
 </project>
