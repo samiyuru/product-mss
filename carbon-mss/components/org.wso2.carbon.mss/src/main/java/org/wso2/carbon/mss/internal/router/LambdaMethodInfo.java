@@ -49,7 +49,17 @@ public class LambdaMethodInfo implements HttpMethodInfo {
 
     @Override
     public void invoke() {
-
+        try {
+            Object returnVal = route.handle(httpRequest, httpResponder);
+            //sending return value as output
+            new HttpMethodResponseHandler()
+                    .setResponder(httpResponder)
+                    .setEntity(returnVal)
+                    .setMediaType(MediaType.WILDCARD)
+                    .send();
+        } catch (Exception e) {
+            exceptionHandler.handle(e, httpRequest, httpResponder);
+        }
     }
 
     @Override
