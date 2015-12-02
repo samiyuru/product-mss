@@ -34,11 +34,11 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
 /**
- * HttpMethodInfo is a helper class having state information about the http handler method to be invoked, the handler
+ * JaxrsMethodInfo is a helper class having state information about the http handler method to be invoked, the handler
  * and arguments required for invocation by the Dispatcher. RequestRouter populates this class and stores in its
  * context as attachment.
  */
-class HttpMethodInfo implements org.wso2.carbon.mss.internal.router.api.HttpMethodInfo {
+class JaxrsMethodInfo implements org.wso2.carbon.mss.internal.router.api.HttpMethodInfo {
 
     private final Method method;
     private final Object handler;
@@ -50,9 +50,9 @@ class HttpMethodInfo implements org.wso2.carbon.mss.internal.router.api.HttpMeth
 
     private HttpStreamHandler httpStreamHandler;
 
-    HttpMethodInfo(Method method, Object handler, HttpRequest request,
-                   HttpResponder responder, Object[] args,
-                   ExceptionHandler exceptionHandler, String mediaType) {
+    JaxrsMethodInfo(Method method, Object handler, HttpRequest request,
+                    HttpResponder responder, Object[] args,
+                    ExceptionHandler exceptionHandler, String mediaType) {
         this.method = method;
         this.handler = handler;
         this.request = request;
@@ -64,10 +64,10 @@ class HttpMethodInfo implements org.wso2.carbon.mss.internal.router.api.HttpMeth
         this.args = args;
     }
 
-    HttpMethodInfo(Method method, Object handler, HttpRequest request,
-                   HttpResponder responder, Object[] args,
-                   ExceptionHandler exceptionHandler, String mediaType,
-                   HttpStreamer httpStreamer) throws HandlerException {
+    JaxrsMethodInfo(Method method, Object handler, HttpRequest request,
+                    HttpResponder responder, Object[] args,
+                    ExceptionHandler exceptionHandler, String mediaType,
+                    HttpStreamer httpStreamer) throws HandlerException {
         this(method, handler, request, responder, args, exceptionHandler, mediaType);
 
         if (!method.getReturnType().equals(Void.TYPE)) {

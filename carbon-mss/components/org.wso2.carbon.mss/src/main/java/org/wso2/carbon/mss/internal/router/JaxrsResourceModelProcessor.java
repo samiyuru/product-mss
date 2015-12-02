@@ -59,11 +59,11 @@ public class JaxrsResourceModelProcessor {
      * @param groupValues Values needed for the invocation.
      * @param contentType Content types
      * @param acceptTypes Accept types
-     * @return HttpMethodInfo
+     * @return JaxrsMethodInfo
      * @throws HandlerException If an error occurs
      */
     @SuppressWarnings("unchecked")
-    public HttpMethodInfo buildHttpMethodInfo(HttpRequest request,
+    public JaxrsMethodInfo buildHttpMethodInfo(HttpRequest request,
                                               HttpResponder responder,
                                               Map<String, String> groupValues,
                                               String contentType,
@@ -113,14 +113,14 @@ public class JaxrsResourceModelProcessor {
                 }
 
                 if (httpStreamer == null) {
-                    return new HttpMethodInfo(jaxrsEndpoint.getMethod(),
+                    return new JaxrsMethodInfo(jaxrsEndpoint.getMethod(),
                             jaxrsEndpoint.getHttpHandler(),
                             request, responder,
                             args,
                             jaxrsResourceModel.getExceptionHandler(),
                             acceptType);
                 } else {
-                    return new HttpMethodInfo(jaxrsEndpoint.getMethod(),
+                    return new JaxrsMethodInfo(jaxrsEndpoint.getMethod(),
                             jaxrsEndpoint.getHttpHandler(),
                             request, responder,
                             args,
