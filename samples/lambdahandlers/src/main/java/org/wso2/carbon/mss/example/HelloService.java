@@ -22,7 +22,7 @@ import org.wso2.carbon.mss.HttpMethods;
 import org.wso2.carbon.mss.MicroservicesRunner;
 
 /**
- * Application entry point.
+ * Application entry point and the service.
  */
 public class HelloService {
     public static void main(String[] args) {
