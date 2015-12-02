@@ -47,12 +47,13 @@ public class HttpMethods {
      * @param path  the path
      * @param route The route
      */
-    public void get(String path, Route route) {
+    public HttpMethods get(String path, Route route) {
         LambdaResourceModel lambdaResourceModel = new LambdaResourceModel(path,
                 Collections.singleton(GET),
                 exceptionHandler,
                 new LambdaEndpoint(route));
         lambdaResourceModels.add(lambdaResourceModel);
+        return this;
     }
 
     /**
@@ -61,12 +62,13 @@ public class HttpMethods {
      * @param path  the path
      * @param route The route
      */
-    public void post(String path, Route route) {
+    public HttpMethods post(String path, Route route) {
         LambdaResourceModel lambdaResourceModel = new LambdaResourceModel(path,
                 Collections.singleton(POST),
                 exceptionHandler,
                 new LambdaEndpoint(route));
         lambdaResourceModels.add(lambdaResourceModel);
+        return this;
     }
 
     /**
@@ -75,12 +77,13 @@ public class HttpMethods {
      * @param path  the path
      * @param route The route
      */
-    public void put(String path, Route route) {
+    public HttpMethods put(String path, Route route) {
         LambdaResourceModel lambdaResourceModel = new LambdaResourceModel(path,
                 Collections.singleton(PUT),
                 exceptionHandler,
                 new LambdaEndpoint(route));
         lambdaResourceModels.add(lambdaResourceModel);
+        return this;
     }
 
     /**
@@ -89,12 +92,13 @@ public class HttpMethods {
      * @param path  the path
      * @param route The route
      */
-    public void delete(String path, Route route) {
+    public HttpMethods delete(String path, Route route) {
         LambdaResourceModel lambdaResourceModel = new LambdaResourceModel(path,
                 Collections.singleton(DELETE),
                 exceptionHandler,
                 new LambdaEndpoint(route));
         lambdaResourceModels.add(lambdaResourceModel);
+        return this;
     }
 
     public List<HttpResourceModel> getLambdaResourceModels() {
