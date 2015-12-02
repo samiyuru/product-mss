@@ -100,6 +100,7 @@
         <module>samples/petstore</module>
         <module>samples/servefile</module>
         <module>samples/template</module>
+        <module>samples/lambdahandlers</module>
         <module>product</module>
     </modules>
 
