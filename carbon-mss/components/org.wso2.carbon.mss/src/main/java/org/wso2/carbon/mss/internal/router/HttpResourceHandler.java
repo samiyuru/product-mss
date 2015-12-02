@@ -107,15 +107,15 @@ public final class HttpResourceHandler implements HttpHandler {
                             method.getName(), method.getParameterTypes());
                 }
             }
-
-            lambdaSets.stream().forEach(httpMethods -> {
-                httpMethods.getLambdaResourceModels()
-                        .stream()
-                        .forEach(httpResourceModel -> {
-                            patternRouter.add(httpResourceModel.getPath(), httpResourceModel);
-                        });
-            });
         }
+
+        lambdaSets.stream().forEach(httpMethods -> {
+            httpMethods.getLambdaResourceModels()
+                    .stream()
+                    .forEach(httpResourceModel -> {
+                        patternRouter.add(httpResourceModel.getPath(), httpResourceModel);
+                    });
+        });
     }
 
     private boolean isHttpMethodAvailable(Method method) {
