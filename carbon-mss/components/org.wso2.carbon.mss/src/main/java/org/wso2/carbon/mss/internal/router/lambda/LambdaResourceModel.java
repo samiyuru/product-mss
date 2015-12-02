@@ -16,9 +16,10 @@
  * under the License.
  */
 
-package org.wso2.carbon.mss.internal.router;
+package org.wso2.carbon.mss.internal.router.lambda;
 
 import io.netty.handler.codec.http.HttpMethod;
+import org.wso2.carbon.mss.internal.router.ExceptionHandler;
 import org.wso2.carbon.mss.internal.router.api.EndpointBean;
 
 import java.util.List;

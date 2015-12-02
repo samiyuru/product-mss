@@ -17,7 +17,7 @@
  *
  */
 
-package org.wso2.carbon.mss.internal.router;
+package org.wso2.carbon.mss.internal.router.jaxrs;
 
 import io.netty.buffer.ByteBuf;
 import io.netty.handler.codec.http.HttpContent;
@@ -27,6 +27,9 @@ import io.netty.handler.codec.http.LastHttpContent;
 import org.wso2.carbon.mss.HttpResponder;
 import org.wso2.carbon.mss.HttpStreamHandler;
 import org.wso2.carbon.mss.HttpStreamer;
+import org.wso2.carbon.mss.internal.router.ExceptionHandler;
+import org.wso2.carbon.mss.internal.router.HandlerException;
+import org.wso2.carbon.mss.internal.router.HttpMethodResponseHandler;
 import org.wso2.carbon.mss.internal.router.beanconversion.BeanConversionException;
 
 import java.io.IOException;

@@ -29,24 +29,24 @@ import io.netty.handler.codec.http.HttpVersion;
 /**
  * Creating Http Response for Exception messages.
  */
-final class HandlerException extends Exception {
+public final class HandlerException extends Exception {
 
     private final transient HttpResponseStatus failureStatus;
     private final String message;
 
-    HandlerException(HttpResponseStatus failureStatus, String message) {
+    public HandlerException(HttpResponseStatus failureStatus, String message) {
         super(message);
         this.failureStatus = failureStatus;
         this.message = message;
     }
 
-    HandlerException(HttpResponseStatus failureStatus, String message, Throwable cause) {
+    public HandlerException(HttpResponseStatus failureStatus, String message, Throwable cause) {
         super(message, cause);
         this.failureStatus = failureStatus;
         this.message = message;
     }
 
-    HttpResponse createFailureResponse() {
+    public HttpResponse createFailureResponse() {
         return new DefaultFullHttpResponse(HttpVersion.HTTP_1_1, failureStatus,
                 Unpooled.copiedBuffer(message, Charsets.UTF_8));
     }

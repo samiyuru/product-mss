@@ -16,7 +16,7 @@
  * under the License.
  */
 
-package org.wso2.carbon.mss.internal.router;
+package org.wso2.carbon.mss.internal.router.lambda;
 
 import io.netty.handler.codec.http.HttpRequest;
 import org.wso2.carbon.mss.HttpResponder;

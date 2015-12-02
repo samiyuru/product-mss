@@ -16,7 +16,7 @@
  * under the License.
  */
 
-package org.wso2.carbon.mss.internal.router;
+package org.wso2.carbon.mss.internal.router.lambda;
 
 import org.wso2.carbon.mss.Route;
 import org.wso2.carbon.mss.internal.router.api.EndpointBean;

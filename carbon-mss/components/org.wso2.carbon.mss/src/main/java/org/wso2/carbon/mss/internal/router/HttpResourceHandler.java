@@ -34,6 +34,8 @@ import org.wso2.carbon.mss.HttpMethods;
 import org.wso2.carbon.mss.HttpResponder;
 import org.wso2.carbon.mss.internal.router.api.EndpointBean;
 import org.wso2.carbon.mss.internal.router.api.HttpResourceModel;
+import org.wso2.carbon.mss.internal.router.jaxrs.JaxrsEndpoint;
+import org.wso2.carbon.mss.internal.router.jaxrs.JaxrsResourceModel;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;

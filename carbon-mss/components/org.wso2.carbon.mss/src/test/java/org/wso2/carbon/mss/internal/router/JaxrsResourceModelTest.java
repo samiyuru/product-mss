@@ -21,6 +21,7 @@ package org.wso2.carbon.mss.internal.router;
 import org.junit.Assert;
 import org.junit.Test;
 import org.wso2.carbon.mss.HttpStreamer;
+import org.wso2.carbon.mss.internal.router.jaxrs.JaxrsResourceModel;
 
 /**
  * Tests functionality fo JaxrsResourceModel.

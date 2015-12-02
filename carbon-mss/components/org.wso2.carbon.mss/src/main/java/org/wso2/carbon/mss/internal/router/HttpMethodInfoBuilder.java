@@ -22,6 +22,10 @@ import io.netty.handler.codec.http.HttpRequest;
 import org.wso2.carbon.mss.HttpResponder;
 import org.wso2.carbon.mss.internal.router.api.HttpMethodInfo;
 import org.wso2.carbon.mss.internal.router.api.HttpResourceModel;
+import org.wso2.carbon.mss.internal.router.jaxrs.JaxrsResourceModel;
+import org.wso2.carbon.mss.internal.router.jaxrs.JaxrsResourceModelProcessor;
+import org.wso2.carbon.mss.internal.router.lambda.LambdaResourceModel;
+import org.wso2.carbon.mss.internal.router.lambda.LambdaResourceModelProcessor;
 
 import java.util.List;
 import java.util.Map;
@@ -84,8 +88,8 @@ public class HttpMethodInfoBuilder {
                 LambdaResourceModel lambdaResourceModel = (LambdaResourceModel) httpResourceModel;
                 httpMethodInfo = new LambdaResourceModelProcessor(lambdaResourceModel)
                         .buildHttpMethodInfo(request,
-                        responder,
-                        groupValues);
+                                responder,
+                                groupValues);
             }
         }
         return httpMethodInfo;

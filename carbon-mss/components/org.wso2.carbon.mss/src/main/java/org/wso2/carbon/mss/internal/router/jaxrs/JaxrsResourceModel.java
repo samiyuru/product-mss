@@ -17,7 +17,7 @@
  *
  */
 
-package org.wso2.carbon.mss.internal.router;
+package org.wso2.carbon.mss.internal.router.jaxrs;
 
 import com.google.common.base.Function;
 import com.google.common.base.Objects;
@@ -25,6 +25,8 @@ import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Sets;
 import io.netty.handler.codec.http.HttpMethod;
 import org.wso2.carbon.mss.HttpStreamer;
+import org.wso2.carbon.mss.internal.router.ExceptionHandler;
+import org.wso2.carbon.mss.internal.router.ParamConvertUtils;
 import org.wso2.carbon.mss.internal.router.api.EndpointBean;
 
 import java.lang.annotation.Annotation;
