@@ -20,6 +20,8 @@ package org.wso2.carbon.mss.internal.router;
 
 import io.netty.handler.codec.http.HttpRequest;
 import org.wso2.carbon.mss.HttpResponder;
+import org.wso2.carbon.mss.internal.router.api.HttpMethodInfo;
+import org.wso2.carbon.mss.internal.router.api.HttpResourceModel;
 
 import java.util.List;
 import java.util.Map;
@@ -70,8 +72,21 @@ public class HttpMethodInfoBuilder {
 
     public HttpMethodInfo build() throws HandlerException {
         if (httpMethodInfo == null) {
-            httpMethodInfo = (new HttpResourceModelProcessor(httpResourceModel))
-                    .buildHttpMethodInfo(request, responder, groupValues, contentType, acceptTypes);
+            if (httpResourceModel instanceof JaxrsResourceModel) {
+                JaxrsResourceModel jaxrsResourceModel = (JaxrsResourceModel) httpResourceModel;
+                httpMethodInfo = (new JaxrsResourceModelProcessor(jaxrsResourceModel))
+                        .buildHttpMethodInfo(request,
+                                responder,
+                                groupValues,
+                                contentType,
+                                acceptTypes);
+            } else if (httpResourceModel instanceof LambdaResourceModel) {
+                LambdaResourceModel lambdaResourceModel = (LambdaResourceModel) httpResourceModel;
+                httpMethodInfo = new LambdaResourceModelProcessor(lambdaResourceModel)
+                        .buildHttpMethodInfo(request,
+                        responder,
+                        groupValues);
+            }
         }
         return httpMethodInfo;
     }
