@@ -39,7 +39,12 @@ public class LambdaResourceModelProcessor {
     public HttpMethodInfo buildHttpMethodInfo(HttpRequest request,
                                               HttpResponder responder,
                                               Map<String, String> groupValues) {
-        return new LambdaMethodInfo(request, responder, groupValues,
-                ((LambdaEndpoint) lambdaResourceModel.getEndpointBean()).getLambdaRoute());
+        return new LambdaMethodInfo(request,
+                responder,
+                groupValues,
+                ((LambdaEndpoint) lambdaResourceModel
+                        .getEndpointBean()).getLambdaRoute(),
+                lambdaResourceModel.getExceptionHandler()
+        );
     }
 }

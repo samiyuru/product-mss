@@ -25,6 +25,7 @@ import org.wso2.carbon.mss.Route;
 import org.wso2.carbon.mss.internal.router.api.HttpMethodInfo;
 
 import java.util.Map;
+import javax.ws.rs.core.MediaType;
 
 public class LambdaMethodInfo implements HttpMethodInfo {
 
@@ -32,15 +33,18 @@ public class LambdaMethodInfo implements HttpMethodInfo {
     private HttpResponder httpResponder;
     private Map<String, String> groupValues;
     private Route route;
+    private ExceptionHandler exceptionHandler;
 
     public LambdaMethodInfo(HttpRequest httpRequest,
                             HttpResponder httpResponder,
                             Map<String, String> groupValues,
-                            Route route) {
+                            Route route,
+                            ExceptionHandler exceptionHandler) {
         this.httpRequest = httpRequest;
         this.httpResponder = httpResponder;
         this.groupValues = groupValues;
         this.route = route;
+        this.exceptionHandler = exceptionHandler;
     }
 
     @Override
