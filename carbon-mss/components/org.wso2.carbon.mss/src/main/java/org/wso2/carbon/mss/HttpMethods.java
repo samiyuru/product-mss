@@ -20,9 +20,9 @@ package org.wso2.carbon.mss;
 
 import io.netty.handler.codec.http.HttpMethod;
 import org.wso2.carbon.mss.internal.router.ExceptionHandler;
+import org.wso2.carbon.mss.internal.router.api.HttpResourceModel;
 import org.wso2.carbon.mss.internal.router.lambda.LambdaEndpoint;
 import org.wso2.carbon.mss.internal.router.lambda.LambdaResourceModel;
-import org.wso2.carbon.mss.internal.router.api.HttpResourceModel;
 
 import java.util.Collections;
 import java.util.LinkedList;
