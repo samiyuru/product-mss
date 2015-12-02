@@ -27,6 +27,10 @@ import org.wso2.carbon.mss.internal.router.api.HttpMethodInfo;
 import java.util.Map;
 import javax.ws.rs.core.MediaType;
 
+/**
+ * Object of this class contains all information
+ * required to invoke a route handler
+ */
 public class LambdaMethodInfo implements HttpMethodInfo {
 
     private HttpRequest httpRequest;
