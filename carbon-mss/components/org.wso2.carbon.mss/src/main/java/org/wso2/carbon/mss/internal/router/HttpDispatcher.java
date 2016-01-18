@@ -25,6 +25,8 @@ import io.netty.handler.codec.http.FullHttpRequest;
 import io.netty.handler.codec.http.HttpContent;
 import io.netty.handler.codec.http.HttpObject;
 import io.netty.util.AttributeKey;
+import org.wso2.carbon.mss.session.Session;
+import org.wso2.carbon.mss.session.SessionHandler;
 
 
 /**
@@ -46,12 +48,18 @@ public class HttpDispatcher extends SimpleChannelInboundHandler<HttpObject> {
                 .context(RequestRouter.class)
                 .attr(AttributeKey.valueOf(RequestRouter.METHOD_INFO_BUILDER))
                 .get();
-        if (httpMethodInfoBuilderObj instanceof HttpMethodInfoBuilder) {
+        Object session = ctx.pipeline()
+                .context(SessionHandler.class)
+                .attr(AttributeKey.valueOf(SessionHandler.SESSION_OBJECT))
+                .get();
+        if (httpMethodInfoBuilderObj instanceof HttpMethodInfoBuilder
+                && session instanceof Session) {
             httpMethodInfoBuilder = (HttpMethodInfoBuilder) httpMethodInfoBuilderObj;
             if (msg instanceof FullHttpRequest) {
                 FullHttpRequest fullHttpRequest = (FullHttpRequest) msg;
                 httpMethodInfoBuilder
                         .httpRequest(fullHttpRequest)
+                        .session((Session) session)
                         .build()
                         .invoke();
             } else if (msg instanceof HttpContent) {

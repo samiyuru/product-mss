@@ -20,6 +20,7 @@ package org.wso2.carbon.mss.internal.router;
 
 import io.netty.handler.codec.http.HttpRequest;
 import org.wso2.carbon.mss.HttpResponder;
+import org.wso2.carbon.mss.session.Session;
 
 import java.util.List;
 import java.util.Map;
@@ -33,6 +34,7 @@ public class HttpMethodInfoBuilder {
 
     private HttpResourceModel httpResourceModel;
     private HttpRequest request;
+    private Session session;
     private HttpResponder responder;
     private Map<String, String> groupValues;
     private String contentType;
@@ -59,6 +61,11 @@ public class HttpMethodInfoBuilder {
         return this;
     }
 
+    public HttpMethodInfoBuilder session(Session session) {
+        this.session = session;
+        return this;
+    }
+
     public HttpMethodInfoBuilder requestInfo(Map<String, String> groupValues,
                                              String contentType,
                                              List<String> acceptTypes) {
@@ -71,7 +78,7 @@ public class HttpMethodInfoBuilder {
     public HttpMethodInfo build() throws HandlerException {
         if (httpMethodInfo == null) {
             httpMethodInfo = (new HttpResourceModelProcessor(httpResourceModel))
-                    .buildHttpMethodInfo(request, responder, groupValues, contentType, acceptTypes);
+                    .buildHttpMethodInfo(request, responder, session, groupValues, contentType, acceptTypes);
         }
         return httpMethodInfo;
     }

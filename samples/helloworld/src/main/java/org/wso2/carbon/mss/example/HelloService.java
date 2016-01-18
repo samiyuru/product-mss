@@ -18,9 +18,12 @@
 
 package org.wso2.carbon.mss.example;
 
+import org.wso2.carbon.mss.session.Session;
+
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
+import javax.ws.rs.core.Context;
 
 /**
  * Hello service resource class.
@@ -28,10 +31,19 @@ import javax.ws.rs.PathParam;
 @Path("/hello")
 public class HelloService {
 
+    private static final String COUNT_KEY = "COUNT_KEY";
+
     @GET
     @Path("/{name}")
-    public String hello(@PathParam("name") String name) {
-        return "Hello " + name;
+    public String hello(@PathParam("name") String name, @Context Session session) {
+        Integer count = (Integer) session.get(COUNT_KEY);
+        if (count == null) {
+            count = 1;
+        } else {
+            count = count + 1;
+        }
+        session.put(COUNT_KEY, count);
+        return "Hello " + name + " count " + count;
     }
 
 }

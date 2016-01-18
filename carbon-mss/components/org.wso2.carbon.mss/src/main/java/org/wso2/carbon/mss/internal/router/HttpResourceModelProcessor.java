@@ -27,6 +27,7 @@ import io.netty.handler.codec.http.QueryStringDecoder;
 import org.wso2.carbon.mss.HttpResponder;
 import org.wso2.carbon.mss.HttpStreamer;
 import org.wso2.carbon.mss.internal.router.beanconversion.BeanConverter;
+import org.wso2.carbon.mss.session.Session;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Type;
@@ -65,6 +66,7 @@ public class HttpResourceModelProcessor {
     @SuppressWarnings("unchecked")
     public HttpMethodInfo buildHttpMethodInfo(HttpRequest request,
                                               HttpResponder responder,
+                                              Session session,
                                               Map<String, String> groupValues,
                                               String contentType,
                                               List<String> acceptTypes)
@@ -98,7 +100,7 @@ public class HttpResourceModelProcessor {
                                     request);
                         } else if (Context.class.isAssignableFrom(annotationType)) {
                             args[idx] = getContextParamValue((HttpResourceModel.ParameterInfo<Object>) paramInfo,
-                                    request, responder);
+                                    request, responder, session);
                         }
                     } else if (request instanceof FullHttpRequest) {
                         // If an annotation is not present the parameter is considered a
@@ -142,13 +144,15 @@ public class HttpResourceModelProcessor {
 
     @SuppressWarnings("unchecked")
     private Object getContextParamValue(HttpResourceModel.ParameterInfo<Object> paramInfo, HttpRequest request,
-                                        HttpResponder responder) {
+                                        HttpResponder responder, Session session) {
         Type paramType = paramInfo.getParameterType();
         Object value = null;
         if (((Class) paramType).isAssignableFrom(HttpRequest.class)) {
             value = request;
         } else if (((Class) paramType).isAssignableFrom(HttpResponder.class)) {
             value = responder;
+        } else if (((Class) paramType).isAssignableFrom(Session.class)) {
+            value = session;
         } else if (((Class) paramType).isAssignableFrom(HttpStreamer.class)) {
             if (httpStreamer == null) {
                 httpStreamer = new HttpStreamer();

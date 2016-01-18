@@ -27,6 +27,11 @@ import io.netty.handler.stream.ChunkedWriteHandler;
 import io.netty.util.concurrent.DefaultEventExecutorGroup;
 import org.wso2.carbon.mss.internal.router.HttpDispatcher;
 import org.wso2.carbon.mss.internal.router.RequestRouter;
+import org.wso2.carbon.mss.session.InMemorySessionStore;
+import org.wso2.carbon.mss.session.SessionHandler;
+import org.wso2.carbon.mss.session.SessionIdGenerator;
+import org.wso2.carbon.mss.session.SessionStore;
+import org.wso2.carbon.mss.session.SimpleSessionIdGenerator;
 import org.wso2.carbon.transport.http.netty.listener.CarbonNettyServerInitializer;
 
 import java.util.Map;
@@ -37,11 +42,14 @@ import java.util.Map;
 public class MSSNettyServerInitializer implements CarbonNettyServerInitializer {
 
     private DefaultEventExecutorGroup eventExecutorGroup;
-
     private MicroservicesRegistry microservicesRegistry;
+    private final SessionStore sessionStore;
+    private final SessionIdGenerator sessionIdGenerator;
 
     public MSSNettyServerInitializer(MicroservicesRegistry microservicesRegistry) {
         this.microservicesRegistry = microservicesRegistry;
+        sessionStore = new InMemorySessionStore();
+        sessionIdGenerator = new SimpleSessionIdGenerator();
     }
 
     @Override
@@ -56,6 +64,7 @@ public class MSSNettyServerInitializer implements CarbonNettyServerInitializer {
         pipeline.addLast("decoder", new HttpRequestDecoder());
         pipeline.addLast("encoder", new HttpResponseEncoder());
         pipeline.addLast("streamer", new ChunkedWriteHandler());
+        pipeline.addLast("session", new SessionHandler(sessionStore, sessionIdGenerator));
         pipeline.addLast("router",
                 new RequestRouter(microservicesRegistry.getHttpResourceHandler(), 0));
         pipeline.addLast(eventExecutorGroup, "dispatcher", new HttpDispatcher());
