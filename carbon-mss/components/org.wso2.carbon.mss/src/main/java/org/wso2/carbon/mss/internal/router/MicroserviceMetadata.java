@@ -55,7 +55,7 @@ public final class MicroserviceMetadata {
 
     private final PatternPathRouterWithGroups<HttpResourceModel> patternRouter = PatternPathRouterWithGroups.create();
     private final Iterable<Object> handlers;
-    private final Iterable<Interceptor> interceptors;
+    private final List<Interceptor> interceptors;
     private final URLRewriter urlRewriter;
 
     /**
@@ -163,20 +163,11 @@ public final class MicroserviceMetadata {
                         }).findFirst().get();
                 HttpResourceModel httpResourceModel = matchedDestination.getDestination();
 
-                // Call preCall method of handler interceptors.
-                boolean terminated = false;
                 ServiceMethodInfo serviceMethodInfo = new ServiceMethodInfo(httpResourceModel.getMethod().
                         getDeclaringClass().getName(), httpResourceModel.getMethod());
-                for (Interceptor interceptor : interceptors) {
-                    if (!interceptor.preCall(request, responder, serviceMethodInfo)) {
-                        // Terminate further request processing if preCall returns false.
-                        terminated = true;
-                        break;
-                    }
-                }
 
                 // Call httpresource handle method, return the HttpMethodInfo Object.
-                if (!terminated) {
+                if (invokeInterceptorPreCalls(request, responder, serviceMethodInfo)) {
                     // Wrap responder to make post hook calls.
                     responder = new WrappedHttpResponder(responder, interceptors, request, serviceMethodInfo);
                     return HttpMethodInfoBuilder
@@ -254,6 +245,14 @@ public final class MicroserviceMetadata {
             }
         }
         return matchedDestinations;
+    }
+
+    private boolean invokeInterceptorPreCalls(HttpRequest request,
+                                              HttpResponder responder,
+                                              ServiceMethodInfo serviceMethodInfo) {
+        return interceptors
+                .stream()
+                .allMatch(interceptor -> interceptor.preCall(request, responder, serviceMethodInfo));
     }
 
     /**
