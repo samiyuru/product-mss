@@ -22,6 +22,8 @@ import io.netty.handler.codec.http.FullHttpRequest;
 import io.netty.handler.codec.http.HttpContent;
 import io.netty.handler.codec.http.HttpObject;
 import io.netty.util.AttributeKey;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 
 /**
@@ -31,6 +33,7 @@ import io.netty.util.AttributeKey;
 public class HttpDispatcher extends SimpleChannelInboundHandler<HttpObject> {
 
     private HttpMethodInfoBuilder httpMethodInfoBuilder;
+    private static final Logger log = LoggerFactory.getLogger(HttpResourceModelProcessor.class);
 
     @Override
     public void channelReadComplete(ChannelHandlerContext ctx) {
@@ -68,5 +71,6 @@ public class HttpDispatcher extends SimpleChannelInboundHandler<HttpObject> {
                             httpMethodInfoBuilder.getRequest(),
                             httpMethodInfoBuilder.getResponder());
         }
+        log.error("Error while dispatching resource method", cause);
     }
 }
