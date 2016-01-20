@@ -17,8 +17,6 @@
 package org.wso2.carbon.mss.internal.router;
 
 import com.google.common.base.Charsets;
-import com.google.common.collect.LinkedListMultimap;
-import com.google.common.collect.Multimap;
 import com.google.common.io.Files;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
@@ -31,6 +29,8 @@ import org.wso2.carbon.mss.internal.router.beanconversion.BeanConverter;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
@@ -45,7 +45,7 @@ public class HttpMethodResponseHandler {
     private HttpResponseStatus status = null;
     private String mediaType = null;
     private Object entity;
-    private Multimap<String, String> headers = LinkedListMultimap.create();
+    private Map<String, String> headers = new HashMap<>();
 
     /**
      * Set netty-http responder object.
@@ -94,7 +94,7 @@ public class HttpMethodResponseHandler {
             this.entity = response.getEntity();
             MultivaluedMap<String, String> multivaluedMap = response.getStringHeaders();
             if (multivaluedMap != null) {
-                multivaluedMap.forEach(headers::putAll);
+                multivaluedMap.forEach((key, values) -> headers.put(key, String.join(", ", values)));
             }
             setStatus(response.getStatus());
             if (response.getMediaType() != null) {
@@ -131,7 +131,8 @@ public class HttpMethodResponseHandler {
                         mediaType = MediaType.WILDCARD;
                     }
                 }
-                responder.sendFile(file, mediaType, headers);
+                responder.setHeaders(headers);
+                responder.sendFile(file, mediaType);
             } else {
                 if (mediaType != null) {
                     entityToSend = BeanConverter.instance(mediaType)
@@ -143,10 +144,12 @@ public class HttpMethodResponseHandler {
                 //String.valueOf() is used to send correct response for entity types other than String
                 //such as primitives like numbers
                 ByteBuf channelBuffer = Unpooled.wrappedBuffer(Charsets.UTF_8.encode(String.valueOf(entityToSend)));
-                responder.sendContent(status, channelBuffer, mediaType, headers);
+                responder.setHeaders(headers);
+                responder.sendContent(status, channelBuffer, mediaType);
             }
         } else {
-            responder.sendStatus(status, headers);
+            responder.setHeaders(headers);
+            responder.sendStatus(status);
         }
     }
 }

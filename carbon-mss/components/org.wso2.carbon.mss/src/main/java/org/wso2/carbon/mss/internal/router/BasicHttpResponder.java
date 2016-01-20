@@ -17,7 +17,6 @@
 package org.wso2.carbon.mss.internal.router;
 
 import com.google.common.base.Preconditions;
-import com.google.common.collect.Multimap;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelFuture;
@@ -34,7 +33,7 @@ import org.wso2.carbon.mss.ChunkResponder;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Collection;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
 import javax.annotation.Nullable;
@@ -48,6 +47,7 @@ public class BasicHttpResponder extends AbstractHttpResponder {
     private final Channel channel;
     private final boolean keepAlive;
     private final AtomicBoolean responded;
+    private Map<String, String> headers = new HashMap<>();
 
     public BasicHttpResponder(Channel channel, boolean keepAlive) {
         this.channel = channel;
@@ -56,14 +56,26 @@ public class BasicHttpResponder extends AbstractHttpResponder {
     }
 
     @Override
-    public ChunkResponder sendChunkStart(HttpResponseStatus status, @Nullable Multimap<String, String> headers) {
+    public void setHeaders(Map<String, String> headers) {
+        this.headers = headers;
+    }
+
+    @Override
+    public void setHeader(String headerName, String headerValue) {
+        headers.put(headerName, headerValue);
+    }
+
+    @Override
+    public String getHeader(String headerName) {
+        return headers.get(headerName);
+    }
+
+    @Override
+    public ChunkResponder sendChunkStart(HttpResponseStatus status) {
         Preconditions.checkArgument(responded.compareAndSet(false, true), "Response has been already sent");
         Preconditions.checkArgument((status.code() >= 200 && status.code() < 210), "Http Chunk Failure");
         HttpResponse response = new DefaultHttpResponse(HttpVersion.HTTP_1_1, status);
 
-        setCustomHeaders(response, headers);
-
-//    response.setChunked(true);
         response.headers().set(HttpHeaders.Names.TRANSFER_ENCODING, HttpHeaders.Values.CHUNKED);
 
         boolean responseKeepAlive = setResponseKeepAlive(response);
@@ -72,8 +84,7 @@ public class BasicHttpResponder extends AbstractHttpResponder {
     }
 
     @Override
-    public void sendContent(HttpResponseStatus status, @Nullable ByteBuf content, String contentType,
-                            @Nullable Multimap<String, String> headers) {
+    public void sendContent(HttpResponseStatus status, @Nullable ByteBuf content, String contentType) {
         Preconditions.checkArgument(responded.compareAndSet(false, true), "Response has been already sent");
         HttpResponse response;
         if (content != null) {
@@ -86,7 +97,7 @@ public class BasicHttpResponder extends AbstractHttpResponder {
             HttpHeaders responseHeaders = response.headers();
             responseHeaders.set(HttpHeaders.Names.CONTENT_LENGTH, 0);
         }
-        setCustomHeaders(response, headers);
+        setCustomHeaders(response);
 
         boolean responseKeepAlive = setResponseKeepAlive(response);
         ChannelFuture future = channel.write(response);
@@ -96,12 +107,11 @@ public class BasicHttpResponder extends AbstractHttpResponder {
     }
 
     @Override
-    public void sendFile(File file, String contentType,
-                         @Nullable Multimap<String, String> headers) throws IOException {
+    public void sendFile(File file, String contentType) throws IOException {
         Preconditions.checkArgument(responded.compareAndSet(false, true), "Response has been already sent");
         HttpResponse response = new DefaultHttpResponse(HttpVersion.HTTP_1_1, HttpResponseStatus.OK);
 
-        setCustomHeaders(response, headers);
+        setCustomHeaders(response);
         response.headers().set(HttpHeaders.Names.CONTENT_TYPE, contentType);
 
         if (!response.headers().contains(HttpHeaders.Names.CONTENT_LENGTH)) {
@@ -120,10 +130,9 @@ public class BasicHttpResponder extends AbstractHttpResponder {
         });
     }
 
-    private void setCustomHeaders(HttpResponse response, @Nullable Multimap<String, String> headers) {
-        // Add headers. They will override all headers set by the framework
+    private void setCustomHeaders(HttpResponse response) {
         if (headers != null) {
-            for (Map.Entry<String, Collection<String>> entry : headers.asMap().entrySet()) {
+            for (Map.Entry<String, String> entry : headers.entrySet()) {
                 response.headers().add(entry.getKey(), entry.getValue());
             }
         }

@@ -17,7 +17,6 @@
 package org.wso2.carbon.mss.internal.router;
 
 import com.google.common.base.Charsets;
-import com.google.common.collect.Multimap;
 import com.google.gson.Gson;
 import io.netty.buffer.ByteBuf;
 import io.netty.handler.codec.http.HttpResponseStatus;
@@ -31,7 +30,8 @@ import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Type;
 import java.nio.ByteBuffer;
-import javax.annotation.Nullable;
+import java.util.HashMap;
+import java.util.Map;
 import javax.ws.rs.core.MediaType;
 
 /**
@@ -43,7 +43,7 @@ public class HttpMethodResponseHandlerTest {
     public void testNoStatusCodeNoEntity() throws BeanConversionException, IOException {
         new HttpMethodResponseHandler()
                 .setResponder(new HttpResponderMock((HttpResponseStatus status,
-                                                     Object entity, Multimap<String, String> headers) -> {
+                                                     Object entity, Map<String, String> headers) -> {
                     Assert.assertTrue("Expected 204", status.code() == HttpResponseStatus.NO_CONTENT.code());
                     Assert.assertEquals(null, entity);
                 }))
@@ -54,7 +54,7 @@ public class HttpMethodResponseHandlerTest {
     public void testNoStatusCodeWithEntity() throws BeanConversionException, IOException {
         new HttpMethodResponseHandler()
                 .setResponder(new HttpResponderMock((HttpResponseStatus status,
-                                                     Object entity, Multimap<String, String> headers) -> {
+                                                     Object entity, Map<String, String> headers) -> {
                     Assert.assertTrue("Expected 200", status.code() == HttpResponseStatus.OK.code());
                     Assert.assertTrue(entity instanceof ByteBuf);
                     Assert.assertEquals("Entity", ((ByteBuf) entity).toString(Charsets.UTF_8));
@@ -67,7 +67,7 @@ public class HttpMethodResponseHandlerTest {
     public void testStatusCodeOkWithNoEntity() throws BeanConversionException, IOException {
         new HttpMethodResponseHandler()
                 .setResponder(new HttpResponderMock((HttpResponseStatus status,
-                                                     Object entity, Multimap<String, String> headers) -> {
+                                                     Object entity, Map<String, String> headers) -> {
                     Assert.assertTrue("Expected 200", status.code() == HttpResponseStatus.OK.code());
                     Assert.assertEquals(null, entity);
                 }))
@@ -79,7 +79,7 @@ public class HttpMethodResponseHandlerTest {
     public void testStatusCodeNotFoundWithNoEntity() throws BeanConversionException, IOException {
         new HttpMethodResponseHandler()
                 .setResponder(new HttpResponderMock((HttpResponseStatus status,
-                                                     Object entity, Multimap<String, String> headers) -> {
+                                                     Object entity, Map<String, String> headers) -> {
                     Assert.assertTrue("Expected 404", status.code() == HttpResponseStatus.NOT_FOUND.code());
                     Assert.assertEquals(null, entity);
                 }))
@@ -92,7 +92,7 @@ public class HttpMethodResponseHandlerTest {
         String content = "Text-Content";
         new HttpMethodResponseHandler()
                 .setResponder(new HttpResponderMock((HttpResponseStatus status,
-                                                     Object entity, Multimap<String, String> headers) -> {
+                                                     Object entity, Map<String, String> headers) -> {
                     Assert.assertEquals(status.code(), HttpResponseStatus.OK.code());
                     //Assert.assertTrue(headers.containsEntry(HttpHeaders.Names.CONTENT_TYPE, MediaType.TEXT_PLAIN));
                     Assert.assertTrue(entity instanceof ByteBuf);
@@ -109,7 +109,7 @@ public class HttpMethodResponseHandlerTest {
         File file = new File("");
         new HttpMethodResponseHandler()
                 .setResponder(new HttpResponderMock((HttpResponseStatus status,
-                                                     Object entity, Multimap<String, String> headers) -> {
+                                                     Object entity, Map<String, String> headers) -> {
                     Assert.assertTrue(entity == file);
                 }))
                 .setEntity(file)
@@ -118,6 +118,7 @@ public class HttpMethodResponseHandlerTest {
 
     private static class HttpResponderMock implements HttpResponder {
 
+        Map<String, String> headers = new HashMap<>();
         private final CallBack cb;
 
         public HttpResponderMock(CallBack cb) {
@@ -125,76 +126,74 @@ public class HttpMethodResponseHandlerTest {
         }
 
         @Override
+        public void setHeaders(Map<String, String> headers) {
+            this.headers = headers;
+        }
+
+        @Override
+        public void setHeader(String headerName, String headerValue) {
+            headers.put(headerName, headerValue);
+        }
+
+        @Override
+        public String getHeader(String headerName) {
+            return headers.get(headers);
+        }
+
+        @Override
         public void sendJson(HttpResponseStatus status, Object object) {
-            cb.values(status, object, null);
+            cb.values(status, object, headers);
         }
 
         @Override
         public void sendJson(HttpResponseStatus status, Object object, Type type) {
-            cb.values(status, object, null);
+            cb.values(status, object, headers);
         }
 
         @Override
         public void sendJson(HttpResponseStatus status, Object object, Type type, Gson gson) {
-            cb.values(status, object, null);
+            cb.values(status, object, headers);
         }
 
         @Override
         public void sendString(HttpResponseStatus status, String data) {
-            cb.values(status, data, null);
-        }
-
-        @Override
-        public void sendString(HttpResponseStatus status, String data,
-                               @Nullable Multimap<String, String> headers) {
             cb.values(status, data, headers);
         }
 
         @Override
         public void sendStatus(HttpResponseStatus status) {
-            cb.values(status, null, null);
-        }
-
-        @Override
-        public void sendStatus(HttpResponseStatus status,
-                               @Nullable Multimap<String, String> headers) {
             cb.values(status, null, headers);
         }
 
         @Override
-        public void sendByteArray(HttpResponseStatus status, byte[] bytes,
-                                  @Nullable Multimap<String, String> headers) {
+        public void sendByteArray(HttpResponseStatus status, byte[] bytes) {
             cb.values(status, bytes, headers);
         }
 
         @Override
-        public void sendBytes(HttpResponseStatus status, ByteBuffer buffer,
-                              @Nullable Multimap<String, String> headers) {
+        public void sendBytes(HttpResponseStatus status, ByteBuffer buffer) {
             cb.values(status, buffer, headers);
         }
 
         @Override
-        public ChunkResponder sendChunkStart(HttpResponseStatus status,
-                                             @Nullable Multimap<String, String> headers) {
+        public ChunkResponder sendChunkStart(HttpResponseStatus status) {
             cb.values(status, null, headers);
             return null;
         }
 
         @Override
-        public void sendContent(HttpResponseStatus status, ByteBuf content, String contentType,
-                                @Nullable Multimap<String, String> headers) {
+        public void sendContent(HttpResponseStatus status, ByteBuf content, String contentType) {
             cb.values(status, content, headers);
         }
 
         @Override
-        public void sendFile(File file, String contentType,
-                             @Nullable Multimap<String, String> headers) {
+        public void sendFile(File file, String contentType) {
             cb.values(null, file, headers);
         }
     }
 
     private static interface CallBack {
-        void values(HttpResponseStatus status, Object entity, Multimap<String, String> headers);
+        void values(HttpResponseStatus status, Object entity, Map<String, String> headers);
     }
 
 }

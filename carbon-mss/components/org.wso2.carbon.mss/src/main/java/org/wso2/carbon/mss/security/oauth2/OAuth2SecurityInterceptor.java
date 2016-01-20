@@ -16,8 +16,6 @@
 package org.wso2.carbon.mss.security.oauth2;
 
 import com.google.common.base.Charsets;
-import com.google.common.collect.ArrayListMultimap;
-import com.google.common.collect.Multimap;
 import com.google.common.io.ByteStreams;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -37,6 +35,7 @@ import org.wso2.carbon.mss.util.SystemVariableUtil;
 import java.lang.reflect.Type;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -185,10 +184,10 @@ public class OAuth2SecurityInterceptor implements Interceptor {
     private void handleSecurityError(SecurityErrorCode errorCode, HttpResponder responder) {
         if (errorCode == SecurityErrorCode.AUTHENTICATION_FAILURE ||
                 errorCode == SecurityErrorCode.INVALID_AUTHORIZATION_HEADER) {
-            Multimap<String, String> map = ArrayListMultimap.create();
+            Map<String, String> map = new HashMap<>();
             map.put(HttpHeaders.Names.WWW_AUTHENTICATE, AUTH_TYPE_OAUTH2);
-            responder.sendStatus(HttpResponseStatus.UNAUTHORIZED, map);
-
+            responder.setHeaders(map);
+            responder.sendStatus(HttpResponseStatus.UNAUTHORIZED);
         } else if (errorCode == SecurityErrorCode.AUTHORIZATION_FAILURE) {
             responder.sendStatus(HttpResponseStatus.FORBIDDEN);
 

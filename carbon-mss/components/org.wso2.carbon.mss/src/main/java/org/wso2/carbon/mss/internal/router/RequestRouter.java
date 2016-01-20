@@ -16,7 +16,6 @@
 package org.wso2.carbon.mss.internal.router;
 
 import com.google.common.base.Objects;
-import com.google.common.collect.ImmutableMultimap;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelFutureListener;
 import io.netty.channel.ChannelHandlerContext;
@@ -36,6 +35,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.InvocationTargetException;
+import java.util.Collections;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
@@ -145,8 +145,9 @@ public class RequestRouter extends SimpleChannelInboundHandler<HttpObject> {
         }
 
         // Send the status and message, followed by closing of the connection.
+        httpMethodInfoBuilder.getResponder().setHeaders(Collections.singletonMap(HttpHeaders.Names.CONNECTION,
+                HttpHeaders.Values.CLOSE));
         httpMethodInfoBuilder.getResponder()
-                .sendString(status, msg,
-                        ImmutableMultimap.of(HttpHeaders.Names.CONNECTION, HttpHeaders.Values.CLOSE));
+                .sendString(status, msg);
     }
 }

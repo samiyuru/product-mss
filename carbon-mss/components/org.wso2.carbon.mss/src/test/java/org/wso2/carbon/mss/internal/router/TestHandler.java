@@ -364,18 +364,6 @@ public class TestHandler implements Microservice {
         return "Uploaded:" + bytesUploaded;
     }
 
-    @Path("/chunk")
-    @POST
-    public void chunk(HttpRequest request, HttpResponder responder) throws IOException {
-        // Echo the POST body of size 1 byte chunk
-        ByteBuf content = ((FullHttpRequest) request).content();
-        ChunkResponder chunker = responder.sendChunkStart(HttpResponseStatus.OK, null);
-        while (content.isReadable()) {
-            chunker.sendChunk(content.readSlice(1));
-        }
-        chunker.close();
-    }
-
     @Path("/gzipfile")
     @GET
     public Response gzipFile() throws IOException, URISyntaxException {

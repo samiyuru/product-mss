@@ -18,8 +18,6 @@ package org.wso2.carbon.mss.internal.router;
 
 import com.google.common.base.Charsets;
 import com.google.common.base.Throwables;
-import com.google.common.collect.ImmutableMultimap;
-import com.google.common.collect.Multimap;
 import com.google.gson.Gson;
 import com.google.gson.stream.JsonWriter;
 import io.netty.buffer.ByteBuf;
@@ -32,7 +30,6 @@ import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.lang.reflect.Type;
 import java.nio.ByteBuffer;
-import javax.annotation.Nullable;
 
 /**
  * Base implementation of {@link org.wso2.carbon.mss.HttpResponder} to simplify child implementations.
@@ -62,7 +59,7 @@ public abstract class AbstractHttpResponder implements HttpResponder {
                 gson.toJson(object, type, jsonWriter);
             }
 
-            sendContent(status, channelBuffer, "application/json", ImmutableMultimap.<String, String>of());
+            sendContent(status, channelBuffer, "application/json");
         } catch (IOException e) {
             throw Throwables.propagate(e);
         }
@@ -70,18 +67,13 @@ public abstract class AbstractHttpResponder implements HttpResponder {
 
     @Override
     public void sendString(HttpResponseStatus status, String data) {
-        sendString(status, data, null);
-    }
-
-    @Override
-    public void sendString(HttpResponseStatus status, String data, @Nullable Multimap<String, String> headers) {
         if (data == null) {
-            sendStatus(status, headers);
+            sendStatus(status);
             return;
         }
         try {
             ByteBuf channelBuffer = Unpooled.wrappedBuffer(Charsets.UTF_8.encode(data));
-            sendContent(status, channelBuffer, "text/plain; charset=utf-8", headers);
+            sendContent(status, channelBuffer, "text/plain; charset=utf-8");
         } catch (Exception e) {
             throw Throwables.propagate(e);
         }
@@ -89,23 +81,18 @@ public abstract class AbstractHttpResponder implements HttpResponder {
 
     @Override
     public void sendStatus(HttpResponseStatus status) {
-        sendContent(status, null, null, ImmutableMultimap.<String, String>of());
+        sendContent(status, null, null);
     }
 
     @Override
-    public void sendStatus(HttpResponseStatus status, @Nullable Multimap<String, String> headers) {
-        sendContent(status, null, null, headers);
-    }
-
-    @Override
-    public void sendByteArray(HttpResponseStatus status, byte[] bytes, @Nullable Multimap<String, String> headers) {
+    public void sendByteArray(HttpResponseStatus status, byte[] bytes) {
         ByteBuf channelBuffer = Unpooled.wrappedBuffer(bytes);
-        sendContent(status, channelBuffer, "application/octet-stream", headers);
+        sendContent(status, channelBuffer, "application/octet-stream");
     }
 
     @Override
-    public void sendBytes(HttpResponseStatus status, ByteBuffer buffer, @Nullable Multimap<String, String> headers) {
-        sendContent(status, Unpooled.wrappedBuffer(buffer), "application/octet-stream", headers);
+    public void sendBytes(HttpResponseStatus status, ByteBuffer buffer) {
+        sendContent(status, Unpooled.wrappedBuffer(buffer), "application/octet-stream");
     }
 
 }

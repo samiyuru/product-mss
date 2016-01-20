@@ -18,7 +18,6 @@ package org.wso2.carbon.mss.internal.router;
 
 import com.google.common.base.Charsets;
 import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.ImmutableMultimap;
 import com.google.common.collect.Maps;
 import com.google.common.io.ByteStreams;
 import com.google.gson.Gson;
@@ -159,8 +158,8 @@ public class URLRewriterTest {
             }
 
             if (request.getUri().startsWith("/redirect/")) {
-                responder.sendStatus(HttpResponseStatus.MOVED_PERMANENTLY,
-                        ImmutableMultimap.of("Location", request.getUri().replace("/redirect/", "/rewrite/")));
+                responder.setHeader("Location", request.getUri().replace("/redirect/", "/rewrite/"));
+                responder.sendStatus(HttpResponseStatus.MOVED_PERMANENTLY);
                 return false;
             }
             return true;

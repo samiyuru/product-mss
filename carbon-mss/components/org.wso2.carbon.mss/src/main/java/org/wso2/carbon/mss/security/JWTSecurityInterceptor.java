@@ -16,8 +16,6 @@
 
 package org.wso2.carbon.mss.security;
 
-import com.google.common.collect.ArrayListMultimap;
-import com.google.common.collect.Multimap;
 import com.nimbusds.jose.JOSEException;
 import com.nimbusds.jose.JWSVerifier;
 import com.nimbusds.jose.crypto.RSASSAVerifier;
@@ -45,6 +43,8 @@ import java.security.cert.CertificateException;
 import java.security.interfaces.RSAPublicKey;
 import java.text.ParseException;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Verify the JWT header in request.
@@ -71,10 +71,10 @@ public class JWTSecurityInterceptor implements Interceptor {
                 }
             }
         }
-        Multimap<String, String> map = ArrayListMultimap.create();
+        Map<String, String> map = new HashMap<>();
         map.put(HttpHeaders.Names.WWW_AUTHENTICATE, AUTH_TYPE_JWT);
-        responder.sendStatus(HttpResponseStatus.UNAUTHORIZED, map);
-
+        responder.setHeaders(map);
+        responder.sendStatus(HttpResponseStatus.UNAUTHORIZED);
         return false;
     }
 

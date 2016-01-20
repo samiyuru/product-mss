@@ -16,7 +16,6 @@
 
 package org.wso2.carbon.mss;
 
-import com.google.common.collect.Multimap;
 import com.google.gson.Gson;
 import io.netty.buffer.ByteBuf;
 import io.netty.handler.codec.http.HttpResponseStatus;
@@ -25,12 +24,36 @@ import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Type;
 import java.nio.ByteBuffer;
-import javax.annotation.Nullable;
+import java.util.Map;
 
 /**
  * HttpResponder is used to send response back to clients.
  */
 public interface HttpResponder {
+
+    /**
+     * Set header values of the response object.
+     * This ignored all the individual headers that might have set previously.
+     *
+     * @param headers map containing the header values
+     */
+    void setHeaders(Map<String, String> headers);
+
+    /**
+     * Set headers in response object.
+     *
+     * @param headerName  name of the header to set
+     * @param headerValue value of the header
+     */
+    void setHeader(String headerName, String headerValue);
+
+    /**
+     * Get header value of the response object.
+     *
+     * @param headerName name of the header to get
+     * @return header value for the header name
+     */
+    String getHeader(String headerName);
 
     /**
      * Sends json response back to the client.
@@ -68,15 +91,6 @@ public interface HttpResponder {
     void sendString(HttpResponseStatus status, String data);
 
     /**
-     * Send a string response back to the http client.
-     *
-     * @param status  status of the Http response.
-     * @param data    string data to be sent back.
-     * @param headers Headers to send.
-     */
-    void sendString(HttpResponseStatus status, String data, @Nullable Multimap<String, String> headers);
-
-    /**
      * Send only a status code back to client without any content.
      *
      * @param status status of the Http response.
@@ -84,41 +98,30 @@ public interface HttpResponder {
     void sendStatus(HttpResponseStatus status);
 
     /**
-     * Send only a status code back to client without any content.
-     *
-     * @param status  status of the Http response.
-     * @param headers Headers to send.
-     */
-    void sendStatus(HttpResponseStatus status, @Nullable Multimap<String, String> headers);
-
-    /**
      * Send a response containing raw bytes. Sets "application/octet-stream" as content type header.
      *
-     * @param status  status of the Http response.
-     * @param bytes   bytes to be sent back.
-     * @param headers headers to be sent back. This will overwrite any headers set by the framework.
+     * @param status status of the Http response.
+     * @param bytes  bytes to be sent back.
      */
-    void sendByteArray(HttpResponseStatus status, byte[] bytes, @Nullable Multimap<String, String> headers);
+    void sendByteArray(HttpResponseStatus status, byte[] bytes);
 
     /**
      * Sends a response containing raw bytes. Default content type is "application/octet-stream", but can be
      * overridden in the headers.
      *
-     * @param status  status of the Http response
-     * @param buffer  bytes to send
-     * @param headers Headers to send.
+     * @param status status of the Http response
+     * @param buffer bytes to send
      */
-    void sendBytes(HttpResponseStatus status, ByteBuffer buffer, @Nullable Multimap<String, String> headers);
+    void sendBytes(HttpResponseStatus status, ByteBuffer buffer);
 
     /**
      * Respond to the client saying the response will be in chunks. The response body can be sent in chunks
      * using the {@link ChunkResponder} returned.
      *
-     * @param status  the status code to respond with
-     * @param headers additional headers to send with the response. May be null.
+     * @param status the status code to respond with
      * @return ChunkResponder
      */
-    ChunkResponder sendChunkStart(HttpResponseStatus status, @Nullable Multimap<String, String> headers);
+    ChunkResponder sendChunkStart(HttpResponseStatus status);
 
     /**
      * Send response back to client.
@@ -126,18 +129,14 @@ public interface HttpResponder {
      * @param status      Status of the response.
      * @param content     Content to be sent back.
      * @param contentType Type of content.
-     * @param headers     Headers to be sent back.
      */
-    void sendContent(HttpResponseStatus status, ByteBuf content, String contentType,
-                     @Nullable Multimap<String, String> headers);
+    void sendContent(HttpResponseStatus status, ByteBuf content, String contentType);
 
 
     /**
      * Sends a file content back to client with response status 200.
      *
-     * @param file    The file to send
-     * @param headers Headers to be sent back.
+     * @param file The file to send
      */
-    void sendFile(File file, String contentType,
-                  @Nullable Multimap<String, String> headers) throws IOException;
+    void sendFile(File file, String contentType) throws IOException;
 }
