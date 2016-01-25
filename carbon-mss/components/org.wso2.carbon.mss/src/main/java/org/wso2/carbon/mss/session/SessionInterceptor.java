@@ -34,11 +34,14 @@ import java.util.NoSuchElementException;
 import java.util.Set;
 import javax.ws.rs.core.Context;
 
+/**
+ * Session interceptor that enables session support of the micro services.
+ */
 public class SessionInterceptor implements Interceptor {
 
     private final SessionStore sessionStore;
     private final SessionIdGenerator sessionIdGenerator;
-    private final static String SESSION_ID_KEY = "session_id";
+    private static final String SESSION_ID_KEY = "session_id";
     private static final Logger log = LoggerFactory.getLogger(SessionInterceptor.class);
 
     public SessionInterceptor(SessionStore sessionStore, SessionIdGenerator sessionIdGenerator) {
@@ -89,7 +92,9 @@ public class SessionInterceptor implements Interceptor {
 
     private Set<Cookie> getCookies(HttpRequest request) {
         final String cookieString = request.headers().get(HttpHeaders.Names.COOKIE);
-        if (cookieString == null || cookieString.trim().isEmpty()) return Collections.emptySet();
+        if (cookieString == null || cookieString.trim().isEmpty()) {
+            return Collections.emptySet();
+        }
         return ServerCookieDecoder.LAX.decode(cookieString);
     }
 }

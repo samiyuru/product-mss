@@ -29,7 +29,6 @@ import io.netty.handler.codec.http.FullHttpRequest;
 import io.netty.handler.codec.http.HttpRequest;
 import io.netty.handler.codec.http.HttpResponseStatus;
 import org.junit.Assert;
-import org.wso2.carbon.mss.ChunkResponder;
 import org.wso2.carbon.mss.HttpResponder;
 import org.wso2.carbon.mss.HttpStreamHandler;
 import org.wso2.carbon.mss.HttpStreamer;

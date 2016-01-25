@@ -29,7 +29,7 @@ import java.util.concurrent.ConcurrentHashMap;
 public class InMemorySessionStore implements SessionStore {
 
     private final Map<String, Session> sessionMap = new ConcurrentHashMap<>();
-    private int NO_CLEANUP = -1;
+    private static final int NO_CLEANUP = -1;
     private long sessionIdleTimeout = Long.MAX_VALUE;
     private long sessionTimeout = Long.MAX_VALUE;
     private long cleanupInterval = NO_CLEANUP;
