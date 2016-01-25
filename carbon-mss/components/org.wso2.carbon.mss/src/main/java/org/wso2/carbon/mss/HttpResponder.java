@@ -33,7 +33,7 @@ public interface HttpResponder {
 
     /**
      * Set header values of the response object.
-     * This ignored all the individual headers that might have set previously.
+     * This replaces the existing headers with new header values.
      *
      * @param headers map containing the header values
      */

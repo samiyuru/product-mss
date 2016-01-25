@@ -36,10 +36,10 @@ public class HttpMethodInfoBuilder {
     private String contentType;
     private List<String> acceptTypes;
     private HttpMethodInfo httpMethodInfo;
+    private Map<Integer, Object> paramOverrides;
 
     public static HttpMethodInfoBuilder getInstance() {
-        HttpMethodInfoBuilder httpMethodInfoBuilder = new HttpMethodInfoBuilder();
-        return httpMethodInfoBuilder;
+        return new HttpMethodInfoBuilder();
     }
 
     public HttpMethodInfoBuilder httpResourceModel(HttpResourceModel httpResourceModel) {
@@ -57,6 +57,11 @@ public class HttpMethodInfoBuilder {
         return this;
     }
 
+    public HttpMethodInfoBuilder paramOverrides(Map<Integer, Object> paramOverrides) {
+        this.paramOverrides = paramOverrides;
+        return this;
+    }
+
     public HttpMethodInfoBuilder requestInfo(Map<String, String> groupValues,
                                              String contentType,
                                              List<String> acceptTypes) {
@@ -69,7 +74,14 @@ public class HttpMethodInfoBuilder {
     public HttpMethodInfo build() throws HandlerException {
         if (httpMethodInfo == null) {
             httpMethodInfo = (new HttpResourceModelProcessor(httpResourceModel))
-                    .buildHttpMethodInfo(request, responder, groupValues, contentType, acceptTypes);
+                    .buildHttpMethodInfo(
+                            request,
+                            responder,
+                            paramOverrides,
+                            groupValues,
+                            contentType,
+                            acceptTypes
+                    );
         }
         return httpMethodInfo;
     }

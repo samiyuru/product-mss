@@ -63,6 +63,7 @@ public class HttpResourceModelProcessor {
     @SuppressWarnings("unchecked")
     public HttpMethodInfo buildHttpMethodInfo(HttpRequest request,
                                               HttpResponder responder,
+                                              Map<Integer, Object> pramOverrides,
                                               Map<String, String> groupValues,
                                               String contentType,
                                               List<String> acceptTypes)
@@ -83,7 +84,13 @@ public class HttpResourceModelProcessor {
                 }
                 int idx = 0;
                 for (HttpResourceModel.ParameterInfo<?> paramInfo : paramInfoList) {
-                    if (paramInfo.getAnnotation() != null) {
+                    if (pramOverrides.containsKey(idx)) {
+                        // If parameter overriding value is set by an interceptor
+                        // that value should take priority and it should be injected
+                        // to the resource method regardless of anything else
+                        args[idx] = pramOverrides.get(idx);
+                    } else if (paramInfo.getAnnotation() != null) {
+                        // If a supported annotation is present act upon it
                         Class<? extends Annotation> annotationType = paramInfo.getAnnotation().annotationType();
                         if (PathParam.class.isAssignableFrom(annotationType)) {
                             args[idx] = getPathParamValue((HttpResourceModel.ParameterInfo<String>) paramInfo,

@@ -18,6 +18,7 @@ package org.wso2.carbon.mss;
 
 
 import java.lang.reflect.Method;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -28,12 +29,26 @@ public class ServiceMethodInfo {
 
     private final String methodName;
     private final Method method;
-
+    private final Map<Integer, Object> paramOverrides = new HashMap<>();
     private Map<String, Object> attributes = new ConcurrentHashMap<>();
 
     public ServiceMethodInfo(String methodName, Method method) {
         this.methodName = methodName;
         this.method = method;
+    }
+
+    public void overrideMethodParam(int paramIndex, Object paramValue) {
+        if (!(paramIndex < this.method.getParameterCount())) {
+            throw new ParamOverrideException("Parameter index exceeds method parameter count");
+        }
+        if (!(method.getParameters()[paramIndex]).getType().isAssignableFrom(paramValue.getClass())) {
+            throw new ParamOverrideException("Parameter type mismatch");
+        }
+        paramOverrides.put(paramIndex, paramValue);
+    }
+
+    public Map<Integer, Object> getParamOverrides() {
+        return paramOverrides;
     }
 
     public String getMethodName() {

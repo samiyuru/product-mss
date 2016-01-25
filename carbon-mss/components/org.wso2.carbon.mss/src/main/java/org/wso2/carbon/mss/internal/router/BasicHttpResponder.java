@@ -57,7 +57,7 @@ public class BasicHttpResponder extends AbstractHttpResponder {
 
     @Override
     public void setHeaders(Map<String, String> headers) {
-        this.headers = headers;
+        this.headers.putAll(headers);
     }
 
     @Override

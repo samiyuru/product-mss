@@ -175,6 +175,7 @@ public final class MicroserviceMetadata {
                             .httpResourceModel(httpResourceModel)
                             .httpRequest(request)
                             .httpResponder(responder)
+                            .paramOverrides(serviceMethodInfo.getParamOverrides())
                             .requestInfo(matchedDestination.getGroupNameValues(),
                                     contentTypeHeader,
                                     acceptHeader);
